@@ -1,0 +1,663 @@
+{
+  "type": "bundle",
+  "id": "bundle--015f82d2-e79d-41a1-bba0-0e9cc08aac94",
+  "objects": [
+    {
+      "type": "identity",
+      "spec_version": "2.1",
+      "id": "identity--fbdc6bfc-5b55-4ce8-a7ca-c95e3974eb63",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "WinASEP Forensic Inspector",
+      "identity_class": "system"
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--09c93da3-963d-4c52-a241-3c7d46256f33",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Persistence IOC: WinAudioHelper",
+      "description": "Detected via Registry Run in HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run. Risk Score: 100/100.",
+      "indicator_types": [
+        "malicious-activity",
+        "anomalous-activity"
+      ],
+      "pattern": "[file:hashes.'SHA-256' = '8f4e2b01c34a9b58210f92b7405df6248d21b926487e42d743a196e481283c9a' AND file:name = 'svchost.exe']",
+      "pattern_type": "stix",
+      "valid_from": "2026-10-03T13:33:32Z",
+      "created_by_ref": "identity--fbdc6bfc-5b55-4ce8-a7ca-c95e3974eb63"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--ce3c3217-820f-4df4-8c23-51df7385b7d6",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Critical System Process Masquerading",
+      "description": "Binary is masquerading as legitimate Windows system file 'svchost.exe' but executes from unauthorized path 'C:\\Users\\Public\\svchost.exe'.",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1036.005",
+          "url": "https://attack.mitre.org/techniques/T1036/005/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--37e2a7be-47c2-4e3d-ab5f-b0dbc2a4d62d",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--09c93da3-963d-4c52-a241-3c7d46256f33",
+      "target_ref": "attack-pattern--ce3c3217-820f-4df4-8c23-51df7385b7d6"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--fc86a159-2a58-456f-9dab-8362251ccbad",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Suspicious Writable Execution Directory",
+      "description": "Startup program executes from a high-risk volatile or user-writable directory matching '\\users\\public'.",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1547.001",
+          "url": "https://attack.mitre.org/techniques/T1547/001/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--500fdf95-c1db-452e-ac26-6b33425eb20a",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--09c93da3-963d-4c52-a241-3c7d46256f33",
+      "target_ref": "attack-pattern--fc86a159-2a58-456f-9dab-8362251ccbad"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--ba85c0d5-2188-490a-abb5-c9148a855a7f",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Unsigned Startup Executable",
+      "description": "Startup entry 'WinAudioHelper' does not possess an Authenticode digital signature.",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1547.001",
+          "url": "https://attack.mitre.org/techniques/T1547/001/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--70051bb4-5a1d-4395-a03b-d96a2dd056a4",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--09c93da3-963d-4c52-a241-3c7d46256f33",
+      "target_ref": "attack-pattern--ba85c0d5-2188-490a-abb5-c9148a855a7f"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--b1e02941-6a29-4c31-a25f-7e58d6e0bbdb",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "High Shannon Entropy (7.86) / Packed Binary",
+      "description": "File exhibits high Shannon entropy of 7.86/8.0, characteristic of packed malware, crypters, or encrypted shellcode.",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1027.002",
+          "url": "https://attack.mitre.org/techniques/T1027/002/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--559153f4-0d57-48e5-935b-445c2d7949f7",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--09c93da3-963d-4c52-a241-3c7d46256f33",
+      "target_ref": "attack-pattern--b1e02941-6a29-4c31-a25f-7e58d6e0bbdb"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--5758b3a3-0758-4556-828d-c7290d2fc767",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Known Packer / Crypter Section Detected",
+      "description": "Known packer/crypter section identified: '.upx0'",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1027.002",
+          "url": "https://attack.mitre.org/techniques/T1027/002/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--075f491b-b11b-436f-8953-a5b8e9f82acf",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--09c93da3-963d-4c52-a241-3c7d46256f33",
+      "target_ref": "attack-pattern--5758b3a3-0758-4556-828d-c7290d2fc767"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--df63fd7d-4c2d-42da-bec6-d187822704d7",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Suspicious Injection / Memory APIs",
+      "description": "Suspicious API imports detected: VirtualAllocEx, WriteProcessMemory, CreateRemoteThread",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1055",
+          "url": "https://attack.mitre.org/techniques/T1055/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--5655ea14-5e61-4f1f-b4af-c1121a08d06a",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--09c93da3-963d-4c52-a241-3c7d46256f33",
+      "target_ref": "attack-pattern--df63fd7d-4c2d-42da-bec6-d187822704d7"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--748f44e8-23de-4008-8b09-91ff05f9e8fd",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Corporate Metadata Impersonation",
+      "description": "File claims CompanyName 'Microsoft Corporation' in metadata but lacks a valid digital signature from that entity.",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1036.005",
+          "url": "https://attack.mitre.org/techniques/T1036/005/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--223d60c5-1073-4c56-a905-27bb02be948e",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--09c93da3-963d-4c52-a241-3c7d46256f33",
+      "target_ref": "attack-pattern--748f44e8-23de-4008-8b09-91ff05f9e8fd"
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--b841d186-23eb-4cef-a0f4-97a97fbc5921",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Persistence IOC: WMI Subscription: SystemHealthSync",
+      "description": "Detected via WMI Event Consumer in root\\subscription\\CommandLineEventConsumer (SystemHealthSync). Risk Score: 100/100.",
+      "indicator_types": [
+        "malicious-activity",
+        "anomalous-activity"
+      ],
+      "pattern": "[file:hashes.'SHA-256' = '7b70b26081cfa5fae721f6e0a63960034d25cc94d157cd649a4e9907b5af37ea' AND file:name = 'mshta.exe']",
+      "pattern_type": "stix",
+      "valid_from": "2026-10-03T13:33:32Z",
+      "created_by_ref": "identity--fbdc6bfc-5b55-4ce8-a7ca-c95e3974eb63"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--5acf9c6d-4dab-4e24-a217-bce994ec9ff2",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Obfuscated Command: Remote Web Download Cradle",
+      "description": "Command line utilizes stealth or obfuscation techniques: Remote Web Download Cradle in command string.",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1059.001",
+          "url": "https://attack.mitre.org/techniques/T1059/001/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--83ba1c43-1c35-4f9d-a556-000f1a780f5f",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--b841d186-23eb-4cef-a0f4-97a97fbc5921",
+      "target_ref": "attack-pattern--5acf9c6d-4dab-4e24-a217-bce994ec9ff2"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--fee333e4-c921-44b9-84fb-1090a0853815",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Living-Off-The-Land Binary (mshta.exe)",
+      "description": "Startup persistence leverages native system utility 'mshta.exe' to proxy script or command execution.",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1218",
+          "url": "https://attack.mitre.org/techniques/T1218/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--68c6665c-f468-47e8-9ead-800e72319807",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--b841d186-23eb-4cef-a0f4-97a97fbc5921",
+      "target_ref": "attack-pattern--fee333e4-c921-44b9-84fb-1090a0853815"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--372e86f4-cb82-4770-a04a-3adf3de530f7",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "WMI Event Subscription Persistence",
+      "description": "Persistent WMI Event Consumer triggers command on system events in 'root\\subscription\\CommandLineEventConsumer (SystemHealthSync)'.",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1546.003",
+          "url": "https://attack.mitre.org/techniques/T1546/003/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--38ee70f4-564b-4510-b333-e651b482c37e",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--b841d186-23eb-4cef-a0f4-97a97fbc5921",
+      "target_ref": "attack-pattern--372e86f4-cb82-4770-a04a-3adf3de530f7"
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--7c9e1c8f-3f36-4b06-975f-e6e93aa2b5dd",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Persistence IOC: Startup File: Q3_Financial_Audit_Report.pdf.exe",
+      "description": "Detected via Startup Folder (LNK/Binary) in User Startup Folder (C:\\Users\\TargetUser\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Q3_Financial_Audit_Report.pdf.exe). Risk Score: 100/100.",
+      "indicator_types": [
+        "malicious-activity",
+        "anomalous-activity"
+      ],
+      "pattern": "[file:hashes.'SHA-256' = '4cf8291a84f38d6f72576315804537b04f56f1008263da10240f471edd2f8605' AND file:name = 'Q3_Financial_Audit_Report.pdf.exe']",
+      "pattern_type": "stix",
+      "valid_from": "2026-10-03T13:33:32Z",
+      "created_by_ref": "identity--fbdc6bfc-5b55-4ce8-a7ca-c95e3974eb63"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--3e1887b6-4758-420c-98d6-a96bd5308b14",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Deceptive Double File Extension",
+      "description": "Binary uses deceptive double extension 'q3_financial_audit_report.pdf.exe' to disguise executable as document/image.",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1036.005",
+          "url": "https://attack.mitre.org/techniques/T1036/005/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--2ed22026-eed6-43e4-8a1e-0b3e26f2cb63",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--7c9e1c8f-3f36-4b06-975f-e6e93aa2b5dd",
+      "target_ref": "attack-pattern--3e1887b6-4758-420c-98d6-a96bd5308b14"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--19dffe7c-5937-4bed-a495-3f5cb45e0cb8",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Unsigned Startup Executable",
+      "description": "Startup entry 'Startup File: Q3_Financial_Audit_Report.pdf.exe' does not possess an Authenticode digital signature.",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1547.001",
+          "url": "https://attack.mitre.org/techniques/T1547/001/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--436e938a-e82d-471f-8aa6-7ab43e5734cc",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--7c9e1c8f-3f36-4b06-975f-e6e93aa2b5dd",
+      "target_ref": "attack-pattern--19dffe7c-5937-4bed-a495-3f5cb45e0cb8"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--9d019ebe-5c85-43e3-9994-527f82770b90",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "High Shannon Entropy (7.68) / Packed Binary",
+      "description": "File exhibits high Shannon entropy of 7.68/8.0, characteristic of packed malware, crypters, or encrypted shellcode.",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1027.002",
+          "url": "https://attack.mitre.org/techniques/T1027/002/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--7c6094fa-3e52-4a48-b16e-9095796a12c8",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--7c9e1c8f-3f36-4b06-975f-e6e93aa2b5dd",
+      "target_ref": "attack-pattern--9d019ebe-5c85-43e3-9994-527f82770b90"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--31ab4966-bc06-4d57-a29c-7b91cfed2810",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Timestomping Timestamp Anomaly",
+      "description": "Timestomping anomaly: Ancient compile timestamp (1970-01-01 00:00:00 UTC)",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1070.006",
+          "url": "https://attack.mitre.org/techniques/T1070/006/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--8df01faf-f292-47ca-81fe-4955482ba2f7",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--7c9e1c8f-3f36-4b06-975f-e6e93aa2b5dd",
+      "target_ref": "attack-pattern--31ab4966-bc06-4d57-a29c-7b91cfed2810"
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--a3e0d1e1-7298-4c82-af90-44ec9450ab50",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Persistence IOC: Task: WindowsDefenderTelemetryUpdate",
+      "description": "Detected via Scheduled Task in Tasks\\Microsoft\\Windows\\Maintenance\\TelemetryUpdate. Risk Score: 95/100.",
+      "indicator_types": [
+        "malicious-activity",
+        "anomalous-activity"
+      ],
+      "pattern": "[file:hashes.'SHA-256' = '3247bcfd60f6dd25f34cb74b5889ab10ef1b3ec72b4d4b3d95b5b25b534560b8' AND file:name = 'powershell.exe']",
+      "pattern_type": "stix",
+      "valid_from": "2026-10-03T13:33:32Z",
+      "created_by_ref": "identity--fbdc6bfc-5b55-4ce8-a7ca-c95e3974eb63"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--7fbb5ea4-d79b-41f8-9158-dbb3de2734b6",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Obfuscated Command: Base64 Encoded PowerShell Command (-enc)",
+      "description": "Command line utilizes stealth or obfuscation techniques: Base64 Encoded PowerShell Command (-enc) in command string.",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1059.001",
+          "url": "https://attack.mitre.org/techniques/T1059/001/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--445e807d-a51b-4888-840c-e7238b2f9537",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--a3e0d1e1-7298-4c82-af90-44ec9450ab50",
+      "target_ref": "attack-pattern--7fbb5ea4-d79b-41f8-9158-dbb3de2734b6"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--0d70744c-9424-4567-aabb-b9b71c098c7d",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Living-Off-The-Land Binary (powershell.exe)",
+      "description": "Startup persistence leverages native system utility 'powershell.exe' to proxy script or command execution.",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1218",
+          "url": "https://attack.mitre.org/techniques/T1218/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--6decab0a-ec4f-4e0c-a94c-93a88cd7851b",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--a3e0d1e1-7298-4c82-af90-44ec9450ab50",
+      "target_ref": "attack-pattern--0d70744c-9424-4567-aabb-b9b71c098c7d"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--26cc938a-75d3-4947-be3a-d61176e11add",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Timestomping Timestamp Anomaly",
+      "description": "Timestomping anomaly: Ancient compile timestamp (1974-07-29 16:18:42 UTC)",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1070.006",
+          "url": "https://attack.mitre.org/techniques/T1070/006/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--764a8a9e-8e51-4bed-9e8d-ffa78289ebc7",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--a3e0d1e1-7298-4c82-af90-44ec9450ab50",
+      "target_ref": "attack-pattern--26cc938a-75d3-4947-be3a-d61176e11add"
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--6125a587-1368-4067-9e3a-bafb3864c853",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Persistence IOC: IFEO Hijack: sethc.exe",
+      "description": "Detected via Image File Execution Options (IFEO) in HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\sethc.exe\\Debugger. Risk Score: 95/100.",
+      "indicator_types": [
+        "malicious-activity",
+        "anomalous-activity"
+      ],
+      "pattern": "[file:hashes.'SHA-256' = 'a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a' AND file:name = 'cmd.exe']",
+      "pattern_type": "stix",
+      "valid_from": "2026-10-03T13:33:32Z",
+      "created_by_ref": "identity--fbdc6bfc-5b55-4ce8-a7ca-c95e3974eb63"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--85f9aa1c-c711-41c2-b297-228eaaec5cb2",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Image File Execution Options (IFEO) Hijack",
+      "description": "Debugger registry key intercepts target binary execution via 'HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\sethc.exe\\Debugger'.",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1546.012",
+          "url": "https://attack.mitre.org/techniques/T1546/012/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--1d524989-25fc-4ef7-af33-3841ba87fa9f",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--6125a587-1368-4067-9e3a-bafb3864c853",
+      "target_ref": "attack-pattern--85f9aa1c-c711-41c2-b297-228eaaec5cb2"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--28ecadaf-03e8-406d-9b33-694ca3277ee0",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Timestomping Timestamp Anomaly",
+      "description": "Timestomping anomaly: Compile timestamp is in the future (2040-02-04 06:33:47 UTC)",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1070.006",
+          "url": "https://attack.mitre.org/techniques/T1070/006/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--bbc79edb-e9ed-4b88-8e47-c73d8eec7211",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--6125a587-1368-4067-9e3a-bafb3864c853",
+      "target_ref": "attack-pattern--28ecadaf-03e8-406d-9b33-694ca3277ee0"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--2a8fc3f2-b0f7-48a8-a9da-d80d0dc8ab82",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Suspicious Injection / Memory APIs",
+      "description": "Suspicious API imports detected: IsDebuggerPresent",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1055",
+          "url": "https://attack.mitre.org/techniques/T1055/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--c4d82185-99bc-4c7e-b5e1-fcbe87cda629",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--6125a587-1368-4067-9e3a-bafb3864c853",
+      "target_ref": "attack-pattern--2a8fc3f2-b0f7-48a8-a9da-d80d0dc8ab82"
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--dae7f02b-07a2-496a-a8dc-141914a16575",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Persistence IOC: Service: Custom Cloud Enterprise Agent",
+      "description": "Detected via Windows Service in HKLM\\SYSTEM\\CurrentControlSet\\Services\\CloudAgent. Risk Score: 20/100.",
+      "indicator_types": [
+        "malicious-activity",
+        "anomalous-activity"
+      ],
+      "pattern": "[file:name = 'agent_service.exe']",
+      "pattern_type": "stix",
+      "valid_from": "2026-10-03T13:33:32Z",
+      "created_by_ref": "identity--fbdc6bfc-5b55-4ce8-a7ca-c95e3974eb63"
+    },
+    {
+      "type": "attack-pattern",
+      "spec_version": "2.1",
+      "id": "attack-pattern--72df21e2-1f1b-47dd-a05d-fa42aa78f71b",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "name": "Unquoted Service Path Vulnerability",
+      "description": "Service binary path 'C:\\Program Files\\Enterprise Cloud Agent\\service\\agent_service.exe --start' contains spaces without quotation marks, creating local privilege escalation vulnerability.",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1574.009",
+          "url": "https://attack.mitre.org/techniques/T1574/009/"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "spec_version": "2.1",
+      "id": "relationship--33c4b0d5-8452-4a40-bef8-0b8666db8e25",
+      "created": "2026-10-03T13:33:32Z",
+      "modified": "2026-10-03T13:33:32Z",
+      "relationship_type": "indicates",
+      "source_ref": "indicator--dae7f02b-07a2-496a-a8dc-141914a16575",
+      "target_ref": "attack-pattern--72df21e2-1f1b-47dd-a05d-fa42aa78f71b"
+    }
+  ]
+}

