@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WinASEP Forensic Inspector | Windows Startup & Persistence Analysis</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- Navbar -->
+    <header class="navbar">
+      <div class="brand">
+        <div class="brand-icon">🛡️</div>
+        <div class="brand-info">
+          <h1>WinASEP Forensic Inspector</h1>
+          <p>Windows Auto-Start Extensibility Points (ASEP) &amp; Threat Intelligence Engine</p>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <button id="btnSimScan" class="btn btn-secondary" onclick="triggerScan('simulation')">
+          <span>🧪</span> Load APT Simulation
+        </button>
+        <button id="btnLiveScan" class="btn btn-primary" onclick="triggerScan('live')">
+          <span>⚡</span> Run Live System Scan
+        </button>
+        <div class="dropdown">
+          <button class="btn btn-secondary">
+            <span>📥</span> Export Report ▼
+          </button>
+          <div class="dropdown-content">
+            <a href="/api/export/pdf" class="dropdown-item" target="_blank">📄 Enterprise PDF Report</a>
+            <a href="/api/export/html" class="dropdown-item" target="_blank">🌐 Standalone HTML Report</a>
+            <a href="/api/export/stix" class="dropdown-item" download>🛡️ STIX 2.1 JSON Bundle</a>
+            <a href="/api/export/csv" class="dropdown-item" download>📊 CSV Dataset</a>
+            <a href="/api/export/json" class="dropdown-item" download>📦 Full JSON Report</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Stat Metric Cards -->
+    <section class="stats-grid">
+      <div class="stat-card risk">
+        <div class="stat-card-header">
+          <span class="stat-label">System Risk Score</span>
+          <span class="stat-icon">📈</span>
+        </div>
+        <div class="stat-value" id="statRiskScore" style="color: var(--accent-cyan);">--</div>
+        <div class="stat-sub" id="statRiskLevel">Status: Calculating...</div>
+      </div>
+
+      <div class="stat-card critical">
+        <div class="stat-card-header">
+          <span class="stat-label">Critical Threats</span>
+          <span class="stat-icon">🚨</span>
+        </div>
+        <div class="stat-value" id="statCritical" style="color: var(--color-critical);">0</div>
+        <div class="stat-sub">Immediate action required</div>
+      </div>
+
+      <div class="stat-card high">
+        <div class="stat-card-header">
+          <span class="stat-label">High Risk Anomalies</span>
+          <span class="stat-icon">⚠️</span>
+        </div>
+        <div class="stat-value" id="statHigh" style="color: var(--color-high);">0</div>
+        <div class="stat-sub">Suspicious persistence vectors</div>
+      </div>
+
+      <div class="stat-card unsigned">
+        <div class="stat-card-header">
+          <span class="stat-label">Medium &amp; Low Risk</span>
+          <span class="stat-icon">🔍</span>
+        </div>
+        <div class="stat-value" id="statMedLow" style="color: var(--color-medium);">0</div>
+        <div class="stat-sub">Unsigned / Unquoted paths</div>
+      </div>
+
+      <div class="stat-card entropy">
+        <div class="stat-card-header">
+          <span class="stat-label">Total ASEPs Inspected</span>
+          <span class="stat-icon">📁</span>
+        </div>
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-sub" id="statHostInfo">Host: Localhost</div>
+      </div>
+    </section>
+
+    <!-- Filter & Search Toolbar -->
+    <section class="filter-section">
+      <div class="search-box-wrapper">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search startup entries by binary name, path, registry location, command line, SHA-256, or triggered rule...">
+      </div>
+
+      <div class="filter-row">
+        <!-- Severity Filters -->
+        <div class="pills-group" id="sevFilterGroup">
+          <button class="pill-btn active" data-filter-type="sev" data-val="ALL">All Severities</button>
+          <button class="pill-btn" data-filter-type="sev" data-val="CRITICAL">Critical</button>
+          <button class="pill-btn" data-filter-type="sev" data-val="HIGH">High</button>
+          <button class="pill-btn" data-filter-type="sev" data-val="MEDIUM">Medium</button>
+          <button class="pill-btn" data-filter-type="sev" data-val="LOW">Low</button>
+          <button class="pill-btn" data-filter-type="sev" data-val="CLEAN">Clean</button>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="pills-group" id="catFilterGroup">
+          <button class="pill-btn active" data-filter-type="cat" data-val="ALL">All Vectors</button>
+          <button class="pill-btn" data-filter-type="cat" data-val="Registry Run">Registry Run</button>
+          <button class="pill-btn" data-filter-type="cat" data-val="Scheduled Task">Scheduled Tasks</button>
+          <button class="pill-btn" data-filter-type="cat" data-val="Windows Service">Services</button>
+          <button class="pill-btn" data-filter-type="cat" data-val="WMI Event Consumer">WMI Persistence</button>
+          <button class="pill-btn" data-filter-type="cat" data-val="Startup Folder (LNK/Binary)">Startup Folder</button>
+          <button class="pill-btn" data-filter-type="cat" data-val="System Driver">Drivers</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Findings Table -->
+    <section class="table-container">
+      <table class="findings-table">
+        <thead>
+          <tr>
+            <th style="width: 130px;">Severity</th>
+            <th style="width: 80px;">Score</th>
+            <th style="width: 260px;">Name &amp; Category</th>
+            <th>Location &amp; Command</th>
+            <th style="width: 180px;">Authenticode</th>
+            <th style="width: 110px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="findingsTableBody">
+          <!-- Populated by JavaScript -->
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <!-- Deep Forensic Inspector Modal -->
+  <div class="modal-overlay" id="inspectorModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h2 id="modalTitle" style="font-size: 18px; font-weight: 700; color: #fff;">Forensic Inspection Details</h2>
+          <p id="modalSub" style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Entry Details &amp; Analysis</p>
+        </div>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Tabs Navigation -->
+        <div class="modal-tabs">
+          <button class="modal-tab-btn active" onclick="switchModalTab('tabOverview')">Overview</button>
+          <button class="modal-tab-btn" onclick="switchModalTab('tabPE')">PE &amp; Cryptography</button>
+          <button class="modal-tab-btn" onclick="switchModalTab('tabSignature')">Digital Signature</button>
+          <button class="modal-tab-btn" onclick="switchModalTab('tabHeuristics')">Rules &amp; MITRE ATT&amp;CK</button>
+          <button class="modal-tab-btn" onclick="switchModalTab('tabRemediation')">Remediation</button>
+        </div>
+
+        <!-- Tab 1: Overview -->
+        <div class="tab-pane active" id="tabOverview">
+          <div class="kv-grid">
+            <div class="kv-key">Entry ID:</div>
+            <div class="kv-val" id="mEntryId"></div>
+            <div class="kv-key">Category:</div>
+            <div class="kv-val" id="mCategory"></div>
+            <div class="kv-key">Persistence Location:</div>
+            <div class="kv-val" id="mLocation"></div>
+            <div class="kv-key">Raw Command:</div>
+            <div class="kv-val" id="mRawCommand"></div>
+            <div class="kv-key">Resolved Path:</div>
+            <div class="kv-val" id="mResolvedPath"></div>
+            <div class="kv-key">User Context:</div>
+            <div class="kv-val" id="mUserContext"></div>
+            <div class="kv-key">Status:</div>
+            <div class="kv-val" id="mEnabled"></div>
+          </div>
+        </div>
+
+        <!-- Tab 2: PE & Cryptography -->
+        <div class="tab-pane" id="tabPE">
+          <div class="kv-grid">
+            <div class="kv-key">SHA-256 Hash:</div>
+            <div class="kv-val" id="mSha256"></div>
+            <div class="kv-key">MD5 Hash:</div>
+            <div class="kv-val" id="mMd5"></div>
+            <div class="kv-key">File Size:</div>
+            <div class="kv-val" id="mFileSize"></div>
+            <div class="kv-key">Shannon Entropy:</div>
+            <div class="kv-val" id="mEntropy"></div>
+            <div class="kv-key">Compile Timestamp:</div>
+            <div class="kv-val" id="mCompileTime"></div>
+            <div class="kv-key">Subsystem:</div>
+            <div class="kv-val" id="mSubsystem"></div>
+            <div class="kv-key">Declared Company:</div>
+            <div class="kv-val" id="mCompany"></div>
+          </div>
+          <div id="mAnomaliesBox" style="margin-top: 10px;"></div>
+        </div>
+
+        <!-- Tab 3: Digital Signature -->
+        <div class="tab-pane" id="tabSignature">
+          <div class="kv-grid">
+            <div class="kv-key">Authenticode Status:</div>
+            <div class="kv-val" id="mSigStatus"></div>
+            <div class="kv-key">Signer Subject:</div>
+            <div class="kv-val" id="mSigSigner"></div>
+            <div class="kv-key">Certificate Issuer:</div>
+            <div class="kv-val" id="mSigIssuer"></div>
+            <div class="kv-key">Trusted Publisher:</div>
+            <div class="kv-val" id="mSigTrusted"></div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Heuristics & MITRE ATT&CK -->
+        <div class="tab-pane" id="tabHeuristics">
+          <div id="mFindingsList"></div>
+        </div>
+
+        <!-- Tab 5: Remediation -->
+        <div class="tab-pane" id="tabRemediation">
+          <p style="font-size: 13px; color: var(--text-muted);">
+            To neutralize this persistence mechanism, execute the following command in an elevated PowerShell terminal:
+          </p>
+          <div class="code-block" style="margin-top: 10px;">
+            <button class="copy-btn" onclick="copyRemediation()">Copy Command</button>
+            <pre id="mRemCommand" style="white-space: pre-wrap; word-break: break-all;"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Screen -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div style="font-family: var(--font-heading); font-size: 16px; font-weight: 600; color: var(--accent-cyan);" id="loadingStatusText">
+      Performing Deep Forensic Inspection...
+    </div>
+  </div>
+
+  <!-- App Logic -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
