@@ -4,10 +4,14 @@ Inspects service configurations, accounts, and checks for Unquoted Service Paths
 """
 
 import os
-import winreg
 from typing import List, Dict, Optional
 from core.models import StartupEntry, ASEPCategory
 from core.collectors.base import BaseCollector
+
+try:
+    import winreg
+except ImportError:
+    winreg = None
 
 
 class ServiceCollector(BaseCollector):
@@ -24,6 +28,8 @@ class ServiceCollector(BaseCollector):
     }
 
     def collect(self) -> List[StartupEntry]:
+        if not winreg:
+            return []
         results: List[StartupEntry] = []
         services_key_path = r"SYSTEM\CurrentControlSet\Services"
 

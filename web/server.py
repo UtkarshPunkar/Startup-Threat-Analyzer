@@ -161,10 +161,12 @@ async def export_stix():
     )
 
 
-def start_server(host: str = "127.0.0.1", port: int = 8000):
+def start_server(host: Optional[str] = None, port: Optional[int] = None):
     """Launches the Uvicorn web server."""
     import uvicorn
-    uvicorn.run("web.server:app", host=host, port=port, reload=False)
+    h = host or os.environ.get("HOST", "0.0.0.0")
+    p = port or int(os.environ.get("PORT", 8000))
+    uvicorn.run("web.server:app", host=h, port=p, reload=False)
 
 
 if __name__ == "__main__":

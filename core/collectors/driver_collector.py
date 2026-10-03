@@ -3,16 +3,22 @@ Collector for Windows Boot and System Drivers (Kernel Persistence).
 """
 
 import os
-import winreg
 from typing import List
 from core.models import StartupEntry, ASEPCategory
 from core.collectors.base import BaseCollector
+
+try:
+    import winreg
+except ImportError:
+    winreg = None
 
 
 class DriverCollector(BaseCollector):
     """Enumerates Boot (Start=0) and System (Start=1) start drivers."""
 
     def collect(self) -> List[StartupEntry]:
+        if not winreg:
+            return []
         results: List[StartupEntry] = []
         services_key_path = r"SYSTEM\CurrentControlSet\Services"
 

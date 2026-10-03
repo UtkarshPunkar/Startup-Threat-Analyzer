@@ -4,10 +4,18 @@ Inspects Run, RunOnce, Winlogon, IFEO Debuggers, Active Setup, AppInit DLLs, and
 """
 
 import os
-import winreg
 from typing import List, Dict, Tuple, Optional
 from core.models import StartupEntry, ASEPCategory
 from core.collectors.base import BaseCollector
+
+try:
+    import winreg
+    HKEY_LOCAL_MACHINE = winreg.HKEY_LOCAL_MACHINE
+    HKEY_CURRENT_USER = winreg.HKEY_CURRENT_USER
+except ImportError:
+    winreg = None
+    HKEY_LOCAL_MACHINE = 0x80000002
+    HKEY_CURRENT_USER = 0x80000001
 
 
 class RegistryCollector(BaseCollector):
@@ -15,23 +23,25 @@ class RegistryCollector(BaseCollector):
 
     # Standard Run & RunOnce targets
     STANDARD_RUN_KEYS = [
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", ASEPCategory.REGISTRY_RUN, "HKLM"),
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce", ASEPCategory.REGISTRY_RUNONCE, "HKLM"),
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnceEx", ASEPCategory.REGISTRY_RUNONCE, "HKLM"),
-        (winreg.HKEY_CURRENT_USER, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", ASEPCategory.REGISTRY_RUN, "HKCU"),
-        (winreg.HKEY_CURRENT_USER, r"SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce", ASEPCategory.REGISTRY_RUNONCE, "HKCU"),
-        (winreg.HKEY_CURRENT_USER, r"SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnceEx", ASEPCategory.REGISTRY_RUNONCE, "HKCU"),
+        (HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", ASEPCategory.REGISTRY_RUN, "HKLM"),
+        (HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce", ASEPCategory.REGISTRY_RUNONCE, "HKLM"),
+        (HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnceEx", ASEPCategory.REGISTRY_RUNONCE, "HKLM"),
+        (HKEY_CURRENT_USER, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", ASEPCategory.REGISTRY_RUN, "HKCU"),
+        (HKEY_CURRENT_USER, r"SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce", ASEPCategory.REGISTRY_RUNONCE, "HKCU"),
+        (HKEY_CURRENT_USER, r"SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnceEx", ASEPCategory.REGISTRY_RUNONCE, "HKCU"),
         
         # WOW6432Node (32-bit persistence on 64-bit systems)
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run", ASEPCategory.REGISTRY_RUN, "HKLM-WoW64"),
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce", ASEPCategory.REGISTRY_RUNONCE, "HKLM-WoW64"),
+        (HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run", ASEPCategory.REGISTRY_RUN, "HKLM-WoW64"),
+        (HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce", ASEPCategory.REGISTRY_RUNONCE, "HKLM-WoW64"),
         
         # Explorer Policies
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run", ASEPCategory.REGISTRY_POLICIES, "HKLM-Policies"),
-        (winreg.HKEY_CURRENT_USER, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run", ASEPCategory.REGISTRY_POLICIES, "HKCU-Policies"),
+        (HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run", ASEPCategory.REGISTRY_POLICIES, "HKLM-Policies"),
+        (HKEY_CURRENT_USER, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run", ASEPCategory.REGISTRY_POLICIES, "HKCU-Policies"),
     ]
 
     def collect(self) -> List[StartupEntry]:
+        if not winreg:
+            return []
         entries: List[StartupEntry] = []
         
         # 1. Enumerate standard Run & RunOnce keys
